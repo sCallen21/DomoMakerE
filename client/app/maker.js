@@ -3,7 +3,7 @@ const handleDomo = (e) => {
   
   $("#domoMessage").animate({width: 'hide'}, 350);
   
-  if($("#domoName").val() == '' || $("#domoAge").val() == ''){
+  if($("#domoName").val() == '' || $("#domoAge").val() == '' || $("#domoSign").val() == ''){
     handleError("All fields required!");
     return false;
   }
@@ -13,6 +13,24 @@ const handleDomo = (e) => {
   });
   
   return false;
+};
+
+const deleteDomo = (e) => {
+  e.preventDefault();
+  
+  $("#domoMessage").animate({width: 'hide'}, 350);
+  
+  if($("#domoDeleteName").val() == ''){
+    handleError("All fields required!");
+    return false;
+  }
+  
+  const action = $("#deleteForm").attr("action");
+  const data = $("#deleteForm").serialize();
+  
+  sendAjax('POST', action, data, function() {
+    loadDomosFromServer();
+  });
 };
 
 const DomoForm = (props) => {
@@ -28,10 +46,29 @@ const DomoForm = (props) => {
       <input id="domoName" type="text" name="name" placeholder="Domo Name"/>
       <label htmlFor="age">Age: </label>
       <input id="domoAge" type="text" name="age" placeholder="Domo Age"/>
+      <label htmlFor="sign">Star Sign: </label>
+      <input id="domoSign" type="text" name="sign" placeholder="Star Sign"/>
       <input type="hidden" name="_csrf" value={props.csrf}/>
       <input className="makeDomoSubmit" type="submit" value="Make Domo"/>
     </form>
   );
+};
+
+const DeleteForm = (props) => {
+  return (
+    <form id="deleteForm"
+          onSubmit={deleteDomo}
+          name="deleteForm"
+          action="/delete"
+          method="POST"
+          className="deleteForm"
+    >
+      <label htmlFor="name">Name: </label>
+      <input id="domoDeleteName" type="text" name="name" placeholder="Domo Name"/>
+      <input type="hidden" name="_csrf" value={props.csrf}/>
+      <input className="deleteDomoSubmit" type="submit" value="Delete Domo"/>
+    </form>
+  )
 };
 
 const DomoList = function(props) {
@@ -42,13 +79,13 @@ const DomoList = function(props) {
       </div>
     );
   }
-  
   const domoNodes = props.domos.map(function(domo) {
     return (
       <div key={domo._id} className="domo">
         <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
         <h3 classname="domoName"> Name: {domo.name}</h3>
         <h3 classname="domoAge"> Age: {domo.age}</h3>
+        <h3 classname="domoSign"> Sign: {domo.starsign}</h3>
       </div>
     );
   });
@@ -71,6 +108,10 @@ const loadDomosFromServer = () => {
 const setup = function(csrf) {
   ReactDOM.render(
     <DomoForm csrf={csrf} />, document.querySelector("#makeDomo")
+  );
+  
+  ReactDOM.render(
+    <DeleteForm csrf={csrf} />, document.querySelector("#deleteDomo")
   );
   
   ReactDOM.render(

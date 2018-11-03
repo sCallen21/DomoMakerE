@@ -12,6 +12,7 @@ const router = (app) => {
   app.post('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.login);
   app.post('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signup);
   app.post('/maker', mid.requiresLogin, controllers.Domo.make);
+  app.post('/delete', mid.requiresLogin, controllers.Domo.delete);
 };
 
 module.exports = router;

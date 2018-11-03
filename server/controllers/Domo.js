@@ -13,13 +13,14 @@ const makerPage = (req, res) => {
 };
 
 const makeDomo = (req, res) => {
-  if (!req.body.name || !req.body.age) {
-    return res.status(400).json({ error: 'Both name and age are required!' });
+  if (!req.body.name || !req.body.age || !req.body.sign) {
+    return res.status(400).json({ error: 'Both name,age, and sign are required!' });
   }
 
   const domoData = {
     name: req.body.name,
     age: req.body.age,
+    starsign: req.body.sign,
     owner: req.session.account._id,
   };
 
@@ -54,6 +55,15 @@ const getDomos = (request, response) => {
   });
 };
 
+const deleteDomo = (request, response) => {
+  const domo = {
+    name: request.body.name,
+  };
+  Domo.DomoModel.deleteDomo(domo);
+  return response.json({ message: 'domo successfully deleted' });
+};
+
 module.exports.makerPage = makerPage;
 module.exports.getDomos = getDomos;
 module.exports.make = makeDomo;
+module.exports.delete = deleteDomo;
